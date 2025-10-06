@@ -26,3 +26,4 @@ test*
 trainer_debug.py
 *autopsy*
 notebooks/*.ipynb
+run_scripts/
