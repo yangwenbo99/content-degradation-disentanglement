@@ -2,6 +2,10 @@
 
 The repository for "Towards a Universal Image Degradation Model via Content-Degradation Disentanglement"
 
+| [Project Page](https://ivc.uwaterloo.ca/projects/content-degradation-disentanglement/) | [Demo & Intro](https://www.youtube.com/watch?v=xB5sfAHmFJA) |
+| :-: | :-: |
+| ![Project Page](https://ivc.uwaterloo.ca/projects/content-degradation-disentanglement/imgs/project_page_shorten_690.png) | ![Demo & Intro](https://ivc.uwaterloo.ca/projects/content-degradation-disentanglement/imgs/video_cover.png) |
+
 [Paper Preprint](https://arxiv.org/abs/2505.12860), [Project Page](https://ivc.uwaterloo.ca/projects/content-degradation-disentanglement/)
 
 Please visit our project page for more details and the trained models.
