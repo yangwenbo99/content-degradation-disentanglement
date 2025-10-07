@@ -1,0 +1,69 @@
+data:
+  patch_size: 128
+  train:
+    batch_size: 24
+    crop_size: 128
+    csv: /wm_simulated/train.csv
+    csv_A_column: name
+    csv_B_column: ref_name
+    csv_path_is_relative: true
+    db_basedir: /wm_simulated/data/
+    enabled: true
+    list_type: paired_csv
+    n_threads: 8
+    root: /
+    suppress_crop: false
+    type: Single_Dataset
+    use_lmdb: true
+hardware:
+  n_GPUs: 4
+log:
+  overwrite: false
+  permanant_visualize_every: 1
+  print_every: 20
+  resume: experiment/test-VUNet-wm-small_patch-head_tail_2/model/latest.pt
+  save: ''
+  save_every: 1
+  save_every_steps: 5000
+  visualize_every: 500
+loss:
+  color_loss: 10*rgbn
+  degrade_loss: 10*dists
+  lambda_bpp_g: 0.0001
+  lambda_bpp_l: 1
+  lambda_color: 1.0
+  lambda_contra: 0.0001
+  lambda_cprs: 1.0
+  lambda_degrade: 1.0
+  lambda_diver: 1.0
+  lambda_latent: 1.0
+  lambda_unpaired: 1.0
+  latent_loss: 1*l1
+  loss: 1*L1
+  skip_threshold: 1e6
+network:
+  netCprs:
+    channels: 256
+    enabled: true
+    head:
+      layers: 2
+    tail:
+      layers: 2
+    type: EntropyBottleneck
+  netE:
+    moco_dist: cos
+    moco_enc: LPE
+    moco_enc_dim: 256
+    moco_enc_kernel: 3
+  netE_loc:
+    moco_enc_dim: 256
+    moco_enc_kernel: 3
+  netG:
+    proj_dim_noise: 8
+    type: sft-1-wrapper
+  positional_embedding: true
+optim:
+  epsilon: 0.001
+  lr_Cprs: 0.001
+train:
+  num_neg: 120

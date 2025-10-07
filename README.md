@@ -12,8 +12,7 @@ Please visit our project page for more details and the trained models.
 - [x] Test the code on newer Compute Canada clusters
 - [x] Release training configs
 - [x] Release trained models
-- [ ] Release test instructions
-- [ ] Release demo notebooks
+- [x] Release demo notebooks
 - [ ] Add an open-source licence (we need to figure out what licence we may use first)
 
 

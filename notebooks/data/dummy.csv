@@ -1,0 +1,4 @@
+name,ref_name,video_index,frame,x,y
+rain_train_portion/real_world/001/001-36/001-36_0_3.png,rain_train_portion/real_world_gt/001/001_0_3.png,001,36,0,3
+rain_train_portion/real_world/001/001-4/001-4_0_4.png,rain_train_portion/real_world_gt/001/001_0_4.png,001,4,0,4
+rain_train_portion/real_world/001/001-32/001-32_0_5.png,rain_train_portion/real_world_gt/001/001_0_5.png,001,32,0,5
