@@ -19,4 +19,8 @@ Please visit our project page for more details and the trained models.
 - [x] Release demo notebooks
 - [ ] Add an open-source licence (we need to figure out what licence we may use first)
 
+## Credits
 
+- A significant portion of the code (especially the house-keeping parts) is adapted from [SYSU-SAIL/DASR](https://github.com/SYSU-SAIL/DASR)
+- `model/vunet_conv.py` is adapted from [shlee0/NoiseTransfer](https://github.com/shlee0/NoiseTransfer).  **Contents of this file are excluded from the license of this repository**
+- Inhomogeneous degradation latent compression code is adapted from [liujiaheng/iclr_17_compression](https://github.com/liujiaheng/iclr_17_compression)

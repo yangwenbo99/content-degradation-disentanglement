@@ -1,3 +1,5 @@
+# Credit: https://github.com/shlee0/NoiseTransfer/tree/main
+# WARNING: This file is is excluded from the license of the rest of the code.
 import functools
 import warnings
 
