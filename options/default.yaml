@@ -1,0 +1,196 @@
+# default.yaml  The default config for the trainer. 
+# This file includes all config items, except those for datasets.
+# Each item is documented with a brief description. 
+
+# Enables debug mode
+debug: false
+seed: 1  # random seed
+
+# Hardware specifications
+hardware:
+  # we never use cpu only
+  n_GPUs: 2  # number of GPUs
+
+# Data specifications
+data:
+  patch_size: 256  # final patch size (crop_size -> patch_size)
+  train:
+    # The dataset part is rather tricky, read docstrings for reference. 
+    enabled: true
+    type: 'Single_Dataset'  # train dataset type # NOTE: the second 's' is in lower case
+    n_threads: 8            # number of threads for loading THIS dataset
+    batch_size: 16          # Batch size for THIS data loader
+    crop_size: 256          # crop patch size
+    list_type: 'paired_csv'  # This option is redundant.  It is here on 
+                             # purpose for avoiding misconfig.
+    use_lmdb: false
+    db_basedir: ''           # for stingy reason
+    root: '/tmp/wm_simulated' # Doesn't matter for LMDB, useful if the path in the filelist is relative
+    csv: '/tmp/wm_simulated/train.csv'
+    csv_A_column: 'name'
+    csv_B_column: 'ref_name'                   # Should be 'ref_name' for paired training
+    csv_path_is_relative: true
+    suppress_crop: False
+  test:
+    # The dataset part is rather tricky, read docstrings for reference. 
+    enabled: true
+    type: 'Single_Dataset'  # train dataset type # NOTE: the second 's' is in lower case
+    n_threads: 8            # number of threads for loading THIS dataset
+    batch_size: 16          # Batch size for THIS data loader
+    crop_size: 256          # crop patch size
+    list_type: 'paired_csv'  # This option is redundant.  It is here on 
+                             # purpose for avoiding misconfig.
+    use_lmdb: false
+    db_basedir: ''         # must be presented if use_lmdb
+    root: '/tmp/wm_simulated'          # for stingy reason
+    csv: '/tmp/wm_simulated/train.csv'
+    csv_A_column: 'name'
+    csv_B_column: 'ref_name'                   # Should be 'ref_name' for paired training
+    csv_path_is_relative: true
+    suppress_crop: False
+
+
+# Network Configuration
+network:
+  precision: 'single'  # FP precision for test (single | half)
+  # Others
+  add_random_state: true  # Add a random state, see tech report.
+  positional_embedding: true # Add a texture of positional embedding to the input
+  netG:
+    # netG
+    type: 'IDASR'  # Generator network
+    kernel_size: 3  # Kernel size
+    scale: 1
+    hf: false
+    n_feats_map: 16
+    channels_map: 4
+    # Below are for vunet
+    proj_dim_noise: 8
+  netE:
+    # netE
+    moco_enc: 'LPE'  # Encoder type.  Can be 'Encoder' or 'LPE' 
+                     # WARNING: This will be paseed to eval()
+    moco_enc_kernel: 13  # Encoder kernel size
+    moco_enc_dim: 256  # Encoder dimension
+    moco_dist: 'cos'  # Distance metric for encoder
+  netE_loc:
+    # netE_loc
+    type: 'LPEL'
+    moco_enc_dim: 256  # Encoder dimension
+    moco_enc_kernel: 13  # Encoder kernel size
+    out_dim: 4
+  netCprs:
+    enabled: false
+    # Below are for EntropyBottleneck
+    type: EntropyBottleneck
+    channels: 256
+    # head:
+    # mid_channel: -1
+    # layers: 2
+    # tail:
+    # mid_channel: -1
+    # layers: 2
+  netCprs_loc:
+    # netCprs_loc
+    # Below are for ImageCompressor
+    enabled: true
+    type: ImageCompressor
+    out_channel_N: 64
+    in_channel_N: 4
+    # Below are for EntropyBottleneck
+    # type: EntropyBottleneck
+    # channels: 256
+
+  netP:
+    # netP (discriminator)
+    C: 3               # Input channels, should almost always be 3,
+    NDF: 64            # 
+    strategy: 'conditioned' # Discriminator strategy, can be 
+                        # conditioned, default, patched, qiqa
+                        # See tech doc for completed info
+    degrad: true  # If set, degradation information will also be fed into discriminator
+                  # Not implemented yet
+    alpha: 0.5    # A magic multiplier
+
+
+# Loss Configuration
+loss:
+  loss: '1*L1'  # loss function configuration
+  skip_threshold: 1e6  # skipping batch that has large error
+  degrade_loss: '100*l1'  # degradation loss
+  color_loss: '1*lab'  # which color loss to use.  May be lab or rgb
+  latent_loss: '1*l1'
+  lambda_contra: 1.0  # Contrastive Loss multiplier
+  lambda_bpp_g: 0.01  # 
+  lambda_bpp_l: 0.01  # 
+  lambda_degrade: 1.0  # Just keep this as 1, we have set it above
+  lambda_color: 1.0  # Just keep this as 1, we have set it above
+  lambda_latent: 1.0 # Just keep this as 1, we have set it above
+  lambda_diver: 1.0  # Diversity Loss multiplier
+  lambda_cprs: 1.0   # Compressor loss for density estimation
+
+  lambda_unpaired: 1.0 # Weight for the unpaired loss
+
+  # GAN Training
+  lambda_gan_gen: 0.0  # The multiplier for GAN loss when training the generator
+  # The above value is set to 0.0 for compatibility reason...
+  lambda_gan_dis: 1.0  # The multiplier for GAN loss when training the discriminator # NOT USED
+  lambda_dis_gp: 5    # Gradient penalty
+  gan_mode: 'lsgan'  # the type of GAN objective. [vanilla| lsgan | wgangp| hinge]. vanilla GAN loss is the cross-entropy objective used in the original GAN paper.
+
+# Training Specifications
+train:
+  num_neg: 160 # 8192  # number of negative samples
+  reset: false  # reset the training
+  test_every: 1000  # do test per every N batches
+  epochs: 100  # number of epochs to train the degradation encoder
+
+# Test-related
+test:
+  test_only: false  # set this option to test the model
+  profile: false  # Check for the model's profile instead of testing
+  test_global: false  # If set, the whole image will be used to test the restoration performance, otherwise, only patches will be used
+
+# Optimization-related
+optim:
+  lr_E: 0.001  # learning rate to train the degradation encoder
+  lr_E_loc: 0.001  # learning rate to train the degradation encoder
+  lr_G: 0.0001  # learning rate to train G
+  lr_Cprs: 0.0001  # learning rate to train G
+  lr_Cprs_loc: 0.0001  # learning rate to train G
+  lr: 0.0001  # learning rate to train the whole network
+  lr_P: 0.0002  # Disciminator's lr
+  lr_decay_gen: 100  # learning rate decay per N epochs
+  lr_decay_dis: 125  # learning rate decay per N epochs
+  decay_type: 'step'  # learning rate decay type
+  gamma_encoder: 0.1  # learning rate decay factor for step decay
+  gamma_gen: 0.5  # learning rate decay factor for step decay
+  gamma_dis: 0.5  # learning rate decay factor for step decay
+  optimizer: 'ADAM'  # optimizer to use (SGD | ADAM | RMSprop)
+  momentum: 0.9  # SGD momentum
+  beta1: 0.9  # ADAM beta1
+  beta2: 0.999  # ADAM beta2
+  epsilon: 1.e-8  # ADAM epsilon for numerical stability
+                  # Must not omit the decimal point
+  weight_decay: 0  # weight decay
+  start_epoch: 0  # resume from the snapshot, and the start_epoch
+
+# Log and save config
+# These are the options that should be available to the logger
+log:
+  save: 'default_exp'  # file name to save
+  overwrite: false      # By default, the Logger will create a new directory.
+                       # This way, the new model will not overwrite old model's 
+                       # data.
+                       # If you don't want the behaviour, set this to true.
+  load: '.'  # file name to load
+  resume: ''  # Set to be the path of the checkpoint that should be loaded
+              # If not resuming, set this to be a False value. 
+  skip_missing: False,  # If set, missing optimizer checkpoints will be skipped.
+  save_models: false  # save all intermediate models
+  print_every: 200  # how many batches to wait before logging training status
+  visualize_every: 2000  # how many batches to wait before logging training status
+  permanant_visualize_every: 1   # How many visual shoud we keep
+  save_results: false  # save output results
+  save_every: 5  # how many epoches to wait before saving the model
+  save_every_step: 2000  # how many global steps to wait before saving the model
